@@ -1,0 +1,188 @@
+version: '3.5'
+services:
+
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=022
+      - TZ=Australia/Hobart
+    volumes:
+      - jellyfin:/config
+      - tv:/tv
+      - movies:/movies
+      - music-videos:/music-videos
+    ports:
+      - 8096:8096
+      - 8920:8920
+      - 7359:7359/udp
+      - 1900:1900/udp
+    restart: unless-stopped
+
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=022
+      - TZ=Australia/Hobart
+    volumes:
+      - sabnzbd:/config
+      - downloads:/downloads
+      - incomplete-downloads:/incomplete-downloads
+    ports:
+      - 8080:8080
+    restart: unless-stopped
+
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=022
+      - TZ=Australia/Hobart
+    volumes:
+      - sonarr:/config
+      - tv:/tv
+      - downloads:/downloads
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=022
+      - TZ=Australia/Hobart
+    volumes:
+      - radarr:/config
+      - movies:/movies
+      - downloads:/downloads
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=022
+      - TZ=Australia/Hobart
+    volumes:
+      - prowlarr:/config
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+
+
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=022
+      - TZ=Australia/Hobart
+    volumes:
+      - overseer:/config
+    ports:
+      - 5055:5055
+    restart: unless-stopped
+    
+  homeassistant:
+    image: lscr.io/linuxserver/homeassistant:latest
+    container_name: homeassistant
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=022
+      - TZ=Australia/Hobart
+    volumes:
+      - home-assistant:/config
+      - /var/run/dbus:/var/run/dbus:ro
+    ports:
+      - 8123:8123
+    restart: unless-stopped
+
+  grocy:
+    image: lscr.io/linuxserver/grocy:latest
+    container_name: grocy
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=022
+      - TZ=Australia/Hobart
+    volumes:
+      - grocy:/config
+    ports:
+      - 9283:80
+    restart: unless-stopped
+
+  github-desktop:
+    image: lscr.io/linuxserver/github-desktop:latest
+    container_name: github-desktop
+    cap_add:
+      - IPC_LOCK
+    security_opt:
+      - seccomp:unconfined #optional
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=022
+      - TZ=Australia/Hobart
+    volumes:
+      - github-desktop:/config
+    ports:
+      - 4000:4000
+      - 3002:3002
+    shm_size: "1gb"
+    restart: unless-stopped
+
+  doublecommander:
+    image: lscr.io/linuxserver/doublecommander:latest
+    container_name: doublecommander
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=022
+      - TZ=Australia/Hobart
+    volumes:
+      - doublecommander:/config
+      - /:/data
+    ports:
+      - 3000:3000
+      - 3005:3005
+    restart: unless-stopped
+
+
+volumes:
+  jellyfin:
+  jellyfin-cache:
+  sabnzbd:
+  downloads:
+  incomplete-downloads:
+  sonarr:
+  radarr:
+  prowlarr:
+  overseer:
+  grocy:
+  doublecommander:
+  tv:
+  movies:
+  music:
+  music-videos:
